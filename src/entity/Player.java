@@ -13,11 +13,19 @@ public class Player extends Entity{
     GamePanel gp;
     Key key;
 
+   private boolean hasKey = false;
+
+
+
     public Player(GamePanel gp,Key k){
         this.gp = gp;
         key = k;
         setDefaultValue();
+        solidArea = new Rectangle(8,16,32,32);
+        solidAdreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
         getPlayerImage();
+
     }
     public void getPlayerImage(){
         try{
@@ -42,19 +50,58 @@ public class Player extends Entity{
     public void update(){
         if(key.up){
             direction = "up";
-            y -=speed;
+            if(!collisionOn){
+                y-=speed;
+            }
+
         } else if(key.down){
             direction = "down";
-            y += speed;
+            if(!collisionOn){
+                y+=speed;
+            }
+
         } else if(key.left){
             direction = "left";
-            x -=speed;
-            spriteLeft++;
+            if(!collisionOn){
+                x-=speed;
+            }
+
         } else if(key.right){
             direction = "right";
-            x += speed;
+            if(!collisionOn){
+                x+=speed;
+            }
+        }
+        //check tile collision
+        collisionOn = false;
+        gp.cT.checkTile(this);
+        //check object collision
+        //default value equals to true because it is in the player clas
+       int objIndex =  gp.cT.checkObject(this,true);
+        try{
+            pickUpObjects(objIndex);
+        }catch (IOException e){
+            e.printStackTrace();
         }
     }
+    public void pickUpObjects(int i) throws IOException {
+        if(i!=999){
+            String objectName = gp.obj[i].name;
+            switch (objectName){
+                case"key":
+                hasKey = true;
+                gp.obj[i] = null;
+                break;
+                case "door":
+                if(hasKey){
+                gp.obj[i].image = ImageIO.read(getClass().getResourceAsStream("/utilities/dooropen.png"));
+                gp.obj[i].collision = false;
+                    }
+            }
+        }
+
+    }
+
     public void draw(Graphics2D g2){
       //  g2.setColor(Color.WHITE);
        // g2.fillRect(x,y,gp.tileSize,gp.tileSize);
@@ -63,14 +110,21 @@ public class Player extends Entity{
 
             case "up" : {
                 ;
-
+                    if(spriteLeft>=1)
                   image = up2;
+                    else{
+                        image = up;
+                    }
 
             break;
             }
             case "down" :{
                 ;
-                image = down;
+                if(spriteLeft>=1){
+                    image = down;
+                } else {
+                    image = down2;
+                }
                 break;
             }
             case "left" : {

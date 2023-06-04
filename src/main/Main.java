@@ -14,6 +14,7 @@ public class Main {
         w.pack();
         w.setLocationRelativeTo(null);
         w.setVisible(true);
+        game.setUpGame();
         game.startGameThread();
 
     }
