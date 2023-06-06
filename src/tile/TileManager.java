@@ -20,7 +20,7 @@ public class TileManager {
         tile = new Tile[10];
         map = new int[panel.maxScreenCol][panel.maxScreenRow];
         getTileImage();
-        drawMap("/maps/map.txt");
+        loadMap("/maps/map.txt");
 
     }
 
@@ -36,7 +36,9 @@ public class TileManager {
         }
     }
 
-    public void drawMap(String file) {
+
+    //reads the map file
+    public void loadMap(String file) {
         try {
             InputStream is = getClass().getResourceAsStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -61,6 +63,7 @@ public class TileManager {
         }
     }
 
+    //draws the tile images on the screen
     public void draw(Graphics2D g2) {
         int col = 0;
         int row = 0;

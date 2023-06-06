@@ -3,6 +3,7 @@ package main;
 
 import utilities.ObjectDoor;
 import utilities.ObjectKey;
+import utilities.SpeedPotion;
 
 public class ObjSetter {
 
@@ -18,6 +19,9 @@ public class ObjSetter {
         panel.obj[1] = new ObjectDoor();
         panel.obj[1].x = 13 * panel.tileSize;
         panel.obj[1].y = 0;
+        panel.obj[2] = new SpeedPotion();
+        panel.obj[2].x = 10 * panel.tileSize;
+        panel.obj[2].y = 10 * panel.tileSize;
 
     }
 }

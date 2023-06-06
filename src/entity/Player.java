@@ -15,6 +15,9 @@ public class Player extends Entity{
 
    private boolean hasKey = false;
 
+   public boolean keyFound = false;
+   public boolean potionFound = false;
+
 
 
     public Player(GamePanel gp,Key k){
@@ -27,6 +30,7 @@ public class Player extends Entity{
         getPlayerImage();
 
     }
+    //gets player's image in different directions
     public void getPlayerImage(){
         try{
           left = ImageIO.read((getClass().getResourceAsStream("/sprite/left.png")));
@@ -41,6 +45,7 @@ public class Player extends Entity{
             e.printStackTrace();
         }
     }
+    //default values for player
     public void setDefaultValue(){
         x = 100;
         y = 100;
@@ -84,24 +89,44 @@ public class Player extends Entity{
             e.printStackTrace();
         }
     }
+    //interactions between player and objects
     public void pickUpObjects(int i) throws IOException {
         if(i!=999){
             String objectName = gp.obj[i].name;
             switch (objectName){
                 case"key":
+                gp.playSoundEffect(4);
                 hasKey = true;
                 gp.obj[i] = null;
+                gp.ui.showMessage("Key found!");
+                keyFound = true;
                 break;
                 case "door":
                 if(hasKey){
                 gp.obj[i].image = ImageIO.read(getClass().getResourceAsStream("/utilities/dooropen.png"));
+                gp.playSoundEffect(3);
                 gp.obj[i].collision = false;
+                gp.ui.showMessage("Door opened!");
+                hasKey = false;
+                if(gp.player.solidArea.intersects(gp.obj[i].solidArea)){
+                    gp.ui.gameFinished = true;
+                    gp.stopMusic();
+                }
                     }
+                break;
+                case"speedpotion":
+                    gp.playSoundEffect(2);
+                    speed+= 2;
+                    gp.obj[i] = null;
+                    potionFound = true;
+                    gp.ui.showMessage("It's the speed up potion!");
+                    break;
             }
         }
 
     }
 
+    //draws out player's image according to different directions
     public void draw(Graphics2D g2){
       //  g2.setColor(Color.WHITE);
        // g2.fillRect(x,y,gp.tileSize,gp.tileSize);
