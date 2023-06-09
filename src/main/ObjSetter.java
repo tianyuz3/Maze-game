@@ -13,15 +13,20 @@ public class ObjSetter {
         panel = p;
     }
     public void setObject(){
-        panel.obj[0] = new ObjectKey();
-        panel.obj[0].x = 14 *panel.tileSize;
-        panel.obj[0].y =  panel.tileSize;
+        if(!panel.player.keyFound) {
+            panel.obj[0] = new ObjectKey();
+            panel.obj[0].x = 5 * panel.tileSize;
+            panel.obj[0].y = 5 * panel.tileSize;
+        }
         panel.obj[1] = new ObjectDoor();
-        panel.obj[1].x = 13 * panel.tileSize;
+        panel.obj[1].x = 9 * panel.tileSize;
         panel.obj[1].y = 0;
-        panel.obj[2] = new SpeedPotion();
-        panel.obj[2].x = 10 * panel.tileSize;
-        panel.obj[2].y = 10 * panel.tileSize;
+        if(!panel.player.potionFound) {
+            panel.obj[2] = new SpeedPotion();
+            panel.obj[2].x = 7 * panel.tileSize;
+            panel.obj[2].y = 13 * panel.tileSize;
+        }
+
 
     }
 }

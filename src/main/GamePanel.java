@@ -1,18 +1,20 @@
 package main;
 
+import data.SaveLoad;
 import entity.Player;
 import tile.TileManager;
 import utilities.Object;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class GamePanel extends JPanel implements Runnable{
    private final int originalTileSize = 16;
    private  final int scale = 3;
      public  final int tileSize = originalTileSize * scale;
-    public final int maxScreenCol = 16;
-    public final int maxScreenRow = 16;
+    public final int maxScreenCol = 21;
+    public final int maxScreenRow = 21;
     public final int screenWidth = tileSize*maxScreenCol;
     public final int screenHeight = tileSize* maxScreenRow;
 
@@ -22,13 +24,17 @@ public class GamePanel extends JPanel implements Runnable{
     public final int mapWidth = tileSize * maxMapCol;
     public final int mapHeight = tileSize * maxMapRow;
 
+
     int FPS = 60;
-    Key key = new Key();
+    Key key = new Key(this);
     //Entity and object
     public Object obj [] = new Object[10];
     public Player player = new Player(this,key);
     //System
     public CollisionTester cT = new CollisionTester(this);
+    Key keyH = new Key(this);
+    SaveLoad saveLoad = new SaveLoad(this);
+
 
     Sound music = new Sound();
 
@@ -39,8 +45,14 @@ public class GamePanel extends JPanel implements Runnable{
 
     public UI ui = new UI(this);
 
+    //Game state
+    public int gameState;
+    public final int playState = 1;
+    public final int pauseState = 2;
 
+    public final int titleState = 0;
 
+    public final int optionState = 3;
 
 
 
@@ -54,7 +66,8 @@ public class GamePanel extends JPanel implements Runnable{
     }
     public void setUpGame(){
         oSetter.setObject();
-        playMusic(0);
+       // playMusic(0);
+        gameState = titleState;
     }
 
     public void startGameThread(){
@@ -86,24 +99,48 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
     public void update(){
-       player.update();
+        if(gameState == playState)
+         player.update();
+        if(gameState == pauseState){
+            stopMusic();
+        }
+
+
     }
+    //draws everything on the screen
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        //tile
-        tileM.draw(g2);
-        //object
-        for(int i = 0 ; i<obj.length; i++){
-            if(obj[i]!=null){
-                obj[i].draw(g2,this);
+
+
+       //Title screen
+        if(gameState == titleState){
+            try {
+                ui.draw(g2);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
+        } else{
+            //tile
+            tileM.draw(g2);
+            //object
+            for(int i = 0 ; i<obj.length; i++){
+                if(obj[i]!=null){
+                    obj[i].draw(g2,this);
+                }
+            }
+            //player
+            player.draw(g2);
+            //UI
+
+            try {
+                ui.draw(g2);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            g2.dispose();
         }
-        //player
-        player.draw(g2);
-        //UI
-        ui.draw(g2);
-        g2.dispose();
     }
     public void playMusic(int i){
         music.setFile(i);

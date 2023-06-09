@@ -24,7 +24,7 @@ public class Player extends Entity{
         this.gp = gp;
         key = k;
         setDefaultValue();
-        solidArea = new Rectangle(8,16,32,32);
+        solidArea = new Rectangle(8,8,20,20);
         solidAdreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
         getPlayerImage();
@@ -47,8 +47,8 @@ public class Player extends Entity{
     }
     //default values for player
     public void setDefaultValue(){
-        x = 100;
-        y = 100;
+        x = 19* gp.tileSize;
+        y = 19* gp.tileSize;
         speed = 5;
         direction = "right";
     }
@@ -91,39 +91,40 @@ public class Player extends Entity{
     }
     //interactions between player and objects
     public void pickUpObjects(int i) throws IOException {
-        if(i!=999){
+        if(i!=999) {
             String objectName = gp.obj[i].name;
-            switch (objectName){
-                case"key":
-                gp.playSoundEffect(4);
-                hasKey = true;
-                gp.obj[i] = null;
-                gp.ui.showMessage("Key found!");
-                keyFound = true;
-                break;
+            switch (objectName) {
+                case "key":
+                    gp.playSoundEffect(4);
+                    hasKey = true;
+                    gp.obj[i] = null;
+                    gp.ui.showMessage("Key found!");
+                    keyFound = true;
+                    break;
                 case "door":
-                if(hasKey){
-                gp.obj[i].image = ImageIO.read(getClass().getResourceAsStream("/utilities/dooropen.png"));
-                gp.playSoundEffect(3);
-                gp.obj[i].collision = false;
-                gp.ui.showMessage("Door opened!");
-                hasKey = false;
-                if(gp.player.solidArea.intersects(gp.obj[i].solidArea)){
-                    gp.ui.gameFinished = true;
-                    gp.stopMusic();
-                }
+                    if (hasKey) {
+                        gp.obj[i].image = ImageIO.read(getClass().getResourceAsStream("/utilities/dooropen.png"));
+                        gp.playSoundEffect(3);
+                        gp.obj[i].collision = false;
+                        gp.ui.showMessage("Door opened!");
+                        hasKey = false;
+                        if (gp.player.solidArea.intersects(gp.obj[i].solidArea)) {
+                            gp.ui.gameFinished = true;
+                            gp.stopMusic();
+                        }
                     }
-                break;
-                case"speedpotion":
+                    break;
+                case "speedpotion":
                     gp.playSoundEffect(2);
-                    speed+= 2;
+                    speed += 2;
                     gp.obj[i] = null;
                     potionFound = true;
                     gp.ui.showMessage("It's the speed up potion!");
                     break;
+
+
             }
         }
-
     }
 
     //draws out player's image according to different directions
